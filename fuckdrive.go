@@ -29,11 +29,28 @@ func main() {
 	Drive := new(Store)
 	Drive.OrderNo = 0
 	if Drive.isLogin().D.Data == "0" {
-		Drive.appType()
-		Drive.mobileLogin()
+		appTypeResp := Drive.appType()
+		if appTypeResp.Data != 1 {
+			logrus.Error(appTypeResp.Message)
+			return
+		}
+		mobileLoginResp := Drive.mobileLogin()
+		if !mobileLoginResp.D.IsSuccess {
+			logrus.Error(mobileLoginResp.D.Message)
+			return
+		}
 	}
-	Drive.GetDaysOrder()
-	Drive.GetInfoByTimeId()
-	Drive.GetTimesInfoByCoachIDNew()
+	getDaysOrderResp := Drive.GetDaysOrder()
+	if !getDaysOrderResp.IsSuccess {
+		logrus.Error(getDaysOrderResp.Message)
+	}
+	getInfoByTimeIdRespD, _ := Drive.GetInfoByTimeId()
+	if !getInfoByTimeIdRespD.D.IsSuccess {
+		logrus.Error(getInfoByTimeIdRespD.D.Message)
+	}
+	_, GetTimesInfoByCoachIDNew := Drive.GetTimesInfoByCoachIDNew()
+	if !GetTimesInfoByCoachIDNew.IsSuccess {
+		logrus.Error(GetTimesInfoByCoachIDNew.Message)
+	}
 	Drive.OrderQueue()
 }

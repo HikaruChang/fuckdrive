@@ -40,7 +40,7 @@ func (Store *Store) GetDaysOrder() (getDaysOrderResp *GetDaysOrderResp) {
 	return getDaysOrderResp
 }
 
-func (Store *Store) GetInfoByTimeId() (getInfoByTimeIdResp *GetInfoByTimeIdResp) {
+func (Store *Store) GetInfoByTimeId() (mobileLoginResp *MobileLoginResp, getInfoByTimeIdResp *GetInfoByTimeIdResp) {
 	Params := GetInfoByTimeIdParams{
 		ArgDay:     fmt.Sprint(time.Now().Year(), "-", int(time.Now().Month()), "-", time.Now().Day()+1),
 		NPageIndex: 1,
@@ -69,16 +69,16 @@ func (Store *Store) GetInfoByTimeId() (getInfoByTimeIdResp *GetInfoByTimeIdResp)
 	if err != nil {
 		logrus.Error(err)
 	}
-	mobileLoginResp := new(MobileLoginResp)
+	mobileLoginResp = new(MobileLoginResp)
 	json.Unmarshal(ResponseBody, &mobileLoginResp)
 	newJson := RegReplace(RegDelete(mobileLoginResp.D.Data, `(\r|\n)`), `"`, `\"`)
 	getInfoByTimeIdResp = new(GetInfoByTimeIdResp)
 	json.Unmarshal([]byte(newJson), &getInfoByTimeIdResp)
 	Store.CoachID = getInfoByTimeIdResp.BusinessData.CoachInfo.Data[0].CoachID
-	return getInfoByTimeIdResp
+	return mobileLoginResp, getInfoByTimeIdResp
 }
 
-func (Store *Store) GetTimesInfoByCoachIDNew() (getTimesInfoByCoachIDNewResp *GetTimesInfoByCoachIDNewResp) {
+func (Store *Store) GetTimesInfoByCoachIDNew() (dresp *Dresp, getTimesInfoByCoachIDNewResp *GetTimesInfoByCoachIDNewResp) {
 	Params := GetTimesInfoByCoachIDNewParams{
 		CoachID: Store.CoachID,
 		Date:    fmt.Sprint(time.Now().Year(), "-", int(time.Now().Month()), "-", time.Now().Day()+1),
@@ -107,13 +107,13 @@ func (Store *Store) GetTimesInfoByCoachIDNew() (getTimesInfoByCoachIDNewResp *Ge
 	if err != nil {
 		logrus.Error(err)
 	}
-	dresp := new(Dresp)
+	dresp = new(Dresp)
 	json.Unmarshal(ResponseBody, &dresp)
 	newJson := RegReplace(RegDelete(dresp.D, `(\r|\n)`), `"`, `\"`)
 	getTimesInfoByCoachIDNewResp = new(GetTimesInfoByCoachIDNewResp)
 	json.Unmarshal([]byte(newJson), &getTimesInfoByCoachIDNewResp)
 	Store.Data = getTimesInfoByCoachIDNewResp.Data
-	return getTimesInfoByCoachIDNewResp
+	return dresp, getTimesInfoByCoachIDNewResp
 }
 
 func (Store *Store) OrderCoachNew() (orderCoachNewResp *OrderCoachNewResp) {

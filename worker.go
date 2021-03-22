@@ -2,6 +2,8 @@ package main
 
 import (
 	"strconv"
+
+	"github.com/sirupsen/logrus"
 )
 
 func (Store *Store) OrderQueue() {
@@ -16,6 +18,8 @@ func (Store *Store) OrderQueue() {
 
 				if orderCoachNewResp.D.Item1 {
 					Store.OrderNo++
+				} else {
+					logrus.Error(orderCoachNewResp.D.Item2)
 				}
 			}
 		}
@@ -28,6 +32,8 @@ func (Store *Store) OrderQueue() {
 				orderCoachNewResp := Store.OrderCoachNew()
 				if orderCoachNewResp.D.Item1 {
 					Store.OrderNo++
+				} else {
+					logrus.Error(orderCoachNewResp.D.Item2)
 				}
 			}
 		}
